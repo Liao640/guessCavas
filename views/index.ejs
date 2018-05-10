@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <!-- <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p> -->
+    <div class="wrap">
+      <div class="chatroom">
+        <!-- <ul id="message">
+          <% for (var i = 0; i < 5; i++) {%>
+              <li><%=msgList[i]%></li>
+          <%}%>
+        </ul> -->
+        <ul id="messages">
+        </ul>
+      </div>
+      <div class="submit_container">
+        <input id="m" autocomplete="off" />
+        <button id="submit">Send</button>
+      </div>
+    </div>
+
+  </body>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="javascripts/jquery.js"></script>
+  <script>
+  var form = document.querySelector('form')
+  var ipt = document.querySelector('input')
+  var button = document.querySelector('button')
+  var messagesObj = document.querySelector('ul#messages')
+
+  var socket = io.connect('http://localhost:3001')
+
+  var username = window.location.search.split('=')[1];
+  username = decodeURIComponent(username)
+  console.log(username)
+  // 登录成功
+  socket.on('loginSuccess', function (data) {
+    if (data.username = username) {
+      alert('登录成功')
+    } else {
+      alert('用户名不匹配，请重试')
+    }
+  })
+  // 登录失败
+  socket.on('loginFail', function (data) {
+    alert('昵称重复')
+  })
+  // 新人加入提示
+  socket.on('add', function (data) {
+    var html = `<p class="system_word">系统通知: ${data.username} 加入群聊天</p>`
+    // $('.chatroom').append(html)
+    messagesObj.innerHTML += html
+  })
+
+  button.addEventListener('click', function () {
+    var message = ipt.value
+    if (!message) {return}
+    var time = new Date()
+    socket.emit('send_msg', {
+      message,
+      time,
+      username,
+      hasRead: false
+    })
+    ipt.value = ''
+    return false;
+  }, false)
+
+  // var msgList = eval('("<%- msgListJson %>")')
+  var msgList = <%- msgListJson %>
+  drawMsg(msgList)
+
+  socket.on('message', function(data){
+    msgList.push(data)
+    console.log('username', username)
+    console.log('data.username', data.username)
+    drawMsg([data])
+  });
+
+  $('ul').on('click', 'li', function(){
+    var idx = $(this).index()
+    msgList[idx].hasRead = true
+    // console.log('msgList', msgList)
+    $(this).find('i').removeClass('circle')
+  })
+
+  function drawMsg (list) {
+    var html = ''
+    list.forEach((data) => {
+      var liClass = username == data.username ? 'myself_msg' : ''
+
+      html += `<li class="${liClass}">
+        <div class="msg_left">
+          <img src="../images/3.jpg">
+          <i class = ${data.hasRead == false ? 'circle' : ''} ></i>
+        </div>
+        <div class="msg_right">
+          <p class="msg_title">
+            <span>${data.username}</span>
+            <span class="time">${data.time}</span>
+          </p>
+          <p class="msg_body" username="${data.username}">${data.message}</p>
+        </div>
+      </li>`
+    })
+
+    messagesObj.innerHTML += html
+    $('.chatroom').scrollTop($(messagesObj).height() - $('.chatroom').height() + 50)
+  }
+
+  // /*退出群聊提示*/
+  // socket.on('leave',function(name){
+  //     if(name != null){
+  //         var html = '<p>FBI warning:'+name+'已退出群聊</p>';
+  //         messagesObj.innerHTML += html
+  //     }
+  // })
+
+
+  </script>
+</html>

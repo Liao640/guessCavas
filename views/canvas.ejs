@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+      <meta name="viewport" content="width=device-width, user-scalable=no" />
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link href="/stylesheets/canvas.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="/javascripts/jquery.js"></script>
+  </head>
+  <body>
+    <div class="pro-canvas">
+      <canvas id="canvas">
+        您的浏览器不支持canvas
+      </canvas>
+      <div id="controller">
+        <div id="black_btn" class="color_btn color_btn_selected"></div>
+        <div id="blue_btn" class="color_btn"></div>
+        <div id="green_btn" class="color_btn"></div>
+        <div id="red_btn" class="color_btn"></div>
+        <div id="orange_btn" class="color_btn"></div>
+        <div id="yellow_btn" class="color_btn"></div>
+        <div id="clear_btn" class="op_btn">清除</div>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+    <img id="drawCanvas" width="300px" height="200px">
+  </body>
+  <script type="text/javascript" src="/javascripts/canvas.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io.connect('http://localhost:3001')
+    var username = window.location.search.split('=')[1]
+    if (username !== 'lsp') {
+      $('.pro-canvas').css('display', 'none')
+    }
+    socket.on('drawCanvas', function (data) {
+      // console.log('drawCanvas', data)
+      $("#drawCanvas").attr('src', data)
+    })
+    var username = null;
+  </script>
+</html>

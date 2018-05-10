@@ -1,0 +1,163 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var app = require('../app');
+var debug = require('debug')('socket:server');
+var http = require('http');
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '3001');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+
+// var io = require('socket.io').listen(server)
+var io = require('socket.io')(server)
+// 定义用户数组
+var users = []
+
+global.messageList = []
+
+
+io.on('connection', function (socket) {
+  // 登录
+  var isNewPerson = true;
+  var username = null;
+
+  socket.on('login', function (data) {
+    // 判断是否为新用户
+    for (var i = 0; i < users.length; i++) {
+      if (users[i].username === data.username) {
+        isNewPerson = false
+        break
+      } else {
+        isNewPerson = true
+      }
+    }
+
+    if (isNewPerson) {
+      username = data.username
+      users.push({
+        username: data.username
+      })
+      /*登录成功*/
+      socket.emit('loginSuccess',data)
+      /*向所有连接的客户端广播add事件*/
+      io.sockets.emit('add',data)
+    } else {
+      socket.emit('loginFail','')
+    }
+  })
+
+  // 发送消息
+  socket.on('send_msg', function (data) {
+    var time = new Date(data.time)
+    // data.time = time.getFullYear() + '/' + (time.getMonth() + 1) + '/' + (time.getDate()) + '  ' +
+    data.time =  ('0' + time.getHours()).substr(-2) + ':' + ('0' + time.getMinutes()).substr(-2) + ":" + ('0' + time.getSeconds()).substr(-2)
+
+    global.messageList.push(data)
+    console.log(global.messageList)
+    // 要将消息发给除特定 socket 外的其他用户
+    // socket.broadcast.emit('message', data)
+    // 我们将消息发送给所有用户，包括发送者。
+    // io.sockets.emit('message', data)
+    io.emit('message', data)
+  })
+
+  socket.on('startConnect', function(data) {
+    // console.log('startConnect', data)
+    io.sockets.emit('drawCanvas', data)
+  })
+
+  // io.sockets.socket(socketid).emit(‘message’, ‘for your eyes only’);
+})
+/*退出登录*/
+/*写在io.on('connection', function (socket) {})里面*/
+// socket.on('disconnect',function(){
+//     /*向所有连接的客户端广播leave事件*/
+//     io.sockets.emit('leave',username)
+//     users.map(function(val,index){
+//         if(val.username === username){
+//               users.splice(index,1);
+//         }
+//     })
+//  })
+
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}

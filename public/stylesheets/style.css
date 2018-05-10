@@ -1,0 +1,191 @@
+/* body {
+    width: 100%;
+    height: auto;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+} */
+html,body{
+    height: 100%;
+    /* background: url('../images/wlx.jpg') no-repeat; */
+     /* background-color: #ddd; */
+}
+
+a {
+    color: #00B7FF;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.wrap{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  top: 0;
+  right: 0;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  background-color: pink;
+  /* background: url('../images/wlx.jpg') repeat; */
+   /* background-size:100% 100%; */
+
+}
+.system_word {
+  text-align: center;
+  font-size: 20px;
+  line-height: 20px;
+  margin:10px auto;
+}
+/*登录界面*/
+.login .title {
+  /* margin-top: 10%; */
+  text-align: left;
+  padding-left: 30px;
+  box-sizing: border-box;
+}
+.login h2{
+  font-size: 32px;
+  line-height: 80px;
+}
+.login input,
+.login button{
+  font-size: 18px;
+  display: inline-block;
+  width: 60%;
+  height: 40px;
+  padding: 0 10px;
+  border-radius: 6px;
+  box-sizing: border-box;
+  outline: none;
+}
+.login button{
+  margin: 30px auto;
+  color: #fff;
+  background-color: #4bb9ff;
+  /* font-size: 16px; */
+  line-height: 16px;
+}
+/*聊天界面*/
+.chatroom {
+    width: 100%;
+    height: 92%;
+    position: relative;
+    overflow-y:auto;
+}
+.login{
+ border: none;
+ text-align: center;
+}
+.submit_container {
+    background: #fff;
+    width: 100%;
+    height: 8%;
+    margin: 0 auto;
+}
+
+.submit_container input {
+    border: 0;
+    width: 86%;
+    height: 100%;
+    /* margin-top: 20%; */
+    float: left;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 18px;
+    outline: none;
+}
+
+.submit_container button {
+    width: 13%;
+    height: 100%;
+    background: rgb(130, 224, 255);
+    border: none;
+    float: left;
+    border-radius: 6px;
+    outline: none;
+    text-align: center;
+}
+
+#messages {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    height: auto;
+}
+
+#messages li {
+    padding: 5px 10px;
+    padding-bottom: 20px;
+    display: flex;
+    height: auto;
+    width: 100%;
+    color:#666;
+    box-sizing: border-box;
+}
+.msg_left {
+    width: 40px;
+    height: 100%;
+    border-radius: 8px;
+    margin-right: 10px;
+    position: relative;
+}
+
+.msg_left img {
+  display: inline-block;
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.msg_left .circle {
+    position: absolute;
+    right: 0;
+    top: 20px;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #f00;
+}
+li p {
+    line-height: 30px;
+    font-size: 26px;
+}
+
+li .msg_title .time {
+    font-size: 16px;
+    margin-left: 14px;
+    height: 30px;
+}
+
+li .msg_body {
+  /*width: 500px;*/
+  max-width: 400px;
+  margin-left: 8px;
+  word-break:break-all;
+  background-color: #4bb9ff;
+  border-radius: 10px;
+  padding:6px 18px;
+  float: left;
+  font-size: 22px;
+  box-sizing: border-box;
+}
+li.myself_msg {
+  text-align: left;
+  flex-direction: row-reverse;
+}
+li.myself_msg .msg_title {
+  display: flex;
+  flex-direction: row-reverse;
+}
+li.myself_msg .msg_title .time{
+  margin-right: 26px;
+}
+ li.myself_msg .msg_body{
+  float: right;
+  background-color:#ddd;
+}
+/*#messages li:nth-child(odd) {
+    background: #eee;
+}*/
